@@ -83,7 +83,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'rEset237?',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
@@ -141,7 +141,7 @@ EMAIL_HOST_PASSWORD = 'gzhj szyg mzej yomr'  # App Password
 DEFAULT_FROM_EMAIL = 'maxim.tsaruk.1993@gmail.com'
 
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 # Database

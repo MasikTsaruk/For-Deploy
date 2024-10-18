@@ -7,6 +7,13 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from .tasks import send_welcome_email
+from .models import CustomUser
+from rest_framework.viewsets import ModelViewSet
+
+
+class CustomUserViewSet(ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
 
 
 class RegisterView(generics.CreateAPIView):
