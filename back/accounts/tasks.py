@@ -1,6 +1,8 @@
 from celery import shared_task
 from django.core.mail import send_mail
 from django.conf import settings
+from celery import shared_task
+from django.core.cache import cache
 
 
 @shared_task
@@ -11,3 +13,9 @@ def send_welcome_email(user_email, user_first_name):
     recipient_list = [user_email]
 
     send_mail(subject, message, email_from, recipient_list)
+
+
+@shared_task
+def clear_cache():
+    print(cache)
+    cache.clear()

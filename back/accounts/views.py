@@ -1,19 +1,34 @@
+from django.contrib.auth import get_user_model
+from django.views.decorators.cache import cache_page
+from django.utils import timezone
+from django.utils.decorators import method_decorator
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import CustomUserSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from django.utils import timezone
-from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from .tasks import send_welcome_email
+from .serializers import CustomUserSerializer
 from .models import CustomUser
-from rest_framework.viewsets import ModelViewSet
 
 
 class CustomUserViewSet(ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    @method_decorator(cache_page(60 * 15))
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+
+        if request.user.is_authenticated:
+            data = response.data
+            data = [user for user in data if user['id'] != request.user.id]
+            response.data = data
+
+        return response
 
 
 class RegisterView(generics.CreateAPIView):
