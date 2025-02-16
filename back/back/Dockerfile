@@ -21,7 +21,6 @@ RUN chmod +x /app/manage.py
 
 # Экспонируем порт
 EXPOSE 8000
-ENV DJANGO_SETTINGS_MODULE=back.settings
 
 # Команда по умолчанию
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

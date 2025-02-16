@@ -40,21 +40,7 @@ INSTALLED_APPS = [
     'accounts',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'channels',
-    "chat",
 ]
-
-WSGI_APPLICATION = 'back.wsgi.application'
-ASGI_APPLICATION = 'back.asgi.application'
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("redis", 6379)],  # Используй имя контейнера вместо localhost
-        },
-    },
-}
 
 
 MIDDLEWARE = [
@@ -65,7 +51,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'chat.middleware.QueryParamTokenMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -144,6 +129,9 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = 'back.wsgi.application'
+
+# settings.py
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -205,26 +193,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'back': {  # Для вашего проекта
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-    },
-}
