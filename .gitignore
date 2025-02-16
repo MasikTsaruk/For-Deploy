@@ -1,0 +1,46 @@
+# Операционные системы
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+
+# Virtualenv
+venv/
+.env/
+*.env
+
+# Логи и временные файлы
+logs/
+*.log
+*.sqlite3
+
+# Docker
+*.pid
+*.tar
+*.sock
+*.log
+*.db
+db.sqlite3
+media/
+staticfiles/
+
+# Git-игнор для IDE
+.vscode/
+.idea/
+*.iml
+
+# Celery
+celerybeat-schedule
+
+# Миграции (если не хочешь их загружать в Git)
+*/migrations/*.py
+*/migrations/*.pyc
+
+# Пароли и настройки
+config.json
+settings_local.py
+
+# Секретные файлы
+.env
+secrets.json
