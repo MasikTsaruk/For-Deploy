@@ -1,8 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.tokens import AccessToken
 from channels.db import database_sync_to_async
+from django.contrib.auth import get_user_model
 from .models import Chat, Message
 
 User = get_user_model()
@@ -10,94 +9,82 @@ User = get_user_model()
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        # Получаем токен из query_string (например, ?token=<JWT_TOKEN>)
-        self.user = None
+        """Обрабатывает подключение WebSocket"""
+        self.user = self.scope["user"]
         self.chat_id = self.scope["path"].strip("/").split("/")[-1]
+        self.room_group_name = f"chat_{self.chat_id}"
 
-        try:
-            query_string = self.scope["query_string"].decode()
-            token_key = query_string.split("token=")[-1] if "token=" in query_string else None
+        print(f"Attempting to connect user {self.user} to chat {self.chat_id}")
 
-            if token_key:
-                access_token = AccessToken(token_key)
-                self.user = await database_sync_to_async(User.objects.get)(id=access_token["user_id"])
-                print(f"✅ Успешная аутентификация: {self.user.email}")
-            else:
-                print("❌ Токен отсутствует в запросе")
-
-        except Exception as e:
-            print(f"❌ Ошибка аутентификации: {e}")
-            await self.close()
-            return
-
-        # Получаем объект чата
+        # Проверяем, есть ли пользователь среди участников
         self.chat = await self.get_chat()
+        participants = await self.get_chat_participants()
 
-        if self.user not in await self.get_chat_participants():
-            print(f"❌ Пользователь {self.user.email} не является участником чата {self.chat_id}")
+        print(f"Participants in chat: {participants}")
+
+        if self.user not in participants:
+            print(f"User {self.user} is not in the chat participants.")
             await self.close()
         else:
-            # Определяем имя группы WebSocket (все участники чата слушают эту группу)
-            self.room_group_name = f"chat_{self.chat_id}"
-
-            # Присоединяем пользователя к группе
+            # Подключаем пользователя к группе WebSocket
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-
             await self.accept()
-            print(f"✅ {self.user.email} подключился к чату {self.chat_id}")
-
-    @database_sync_to_async
-    def get_chat(self):
-        return Chat.objects.get(id=self.chat_id)
-
-    @database_sync_to_async
-    def get_chat_participants(self):
-        return list(self.chat.participants.all())
+            print(f"User {self.user} connected to chat {self.chat_id}")
 
     async def disconnect(self, close_code):
-        print(f"🔴 {self.user.email if self.user else 'Анонимный пользователь'} отключился от чата {self.chat_id}")
-
-        # Удаляем пользователя из группы
+        """Отключение WebSocket"""
+        print(f"Disconnecting from chat {self.chat_id} with code {close_code}")
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        message_content = data.get("message", "").strip()
+        """Обрабатывает входящее сообщение от клиента"""
+        text_data_json = json.loads(text_data)
+        message = text_data_json["message"]
 
-        if not message_content:
-            print("❌ Пустое сообщение, не отправляем")
-            return
+        print(f"Received message from {self.user}: {message}")
 
-        # Сохраняем сообщение в базе данных
-        message = await self.save_message(message_content)
+        # Создаём сообщение в базе
+        msg = await self.create_message(message)
 
-        # Отправляем сообщение в WebSocket группу
+        # Отправляем сообщение **всем, кроме отправителя**
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 "type": "chat_message",
-                "message": message_content,
-                "sender": self.user.email,
-                "timestamp": str(message.timestamp),
-            },
+                "message": msg.content,
+                "sender_id": msg.sender.id,
+                "sender_email": msg.sender.email,
+                "timestamp": msg.timestamp.isoformat(),
+            }
         )
 
-        print(f"📩 {self.user.email} отправил сообщение в чат {self.chat_id}: {message_content}")
-
-    @database_sync_to_async
-    def save_message(self, content):
-        return Message.objects.create(chat=self.chat, sender=self.user, content=content)
-
     async def chat_message(self, event):
-        """Обработчик для отправки сообщения всем пользователям в группе"""
+        """Обрабатывает отправку сообщений в группу"""
         message = event["message"]
-        sender = event["sender"]
+        sender_id = event["sender_id"]
+        sender_email = event["sender_email"]
         timestamp = event["timestamp"]
 
-        await self.send(text_data=json.dumps({
-            "message": message,
-            "sender": sender,
-            "timestamp": timestamp
-        }))
+        # Отправляем сообщение только **не отправителю**
+        if sender_id != self.user.id:
+            await self.send(text_data=json.dumps({
+                "message": message,
+                "sender_id": sender_id,
+                "sender_email": sender_email,
+                "timestamp": timestamp
+            }))
 
-        print(f"📤 Отправлено сообщение в WebSocket: {message} от {sender}")
+    @database_sync_to_async
+    def get_chat(self):
+        """Загружает объект чата по chat_id"""
+        return Chat.objects.get(id=self.chat_id)
+
+    @database_sync_to_async
+    def get_chat_participants(self):
+        """Получает список участников чата"""
+        return list(self.chat.participants.all())
+
+    @database_sync_to_async
+    def create_message(self, content):
+        """Создаёт новое сообщение в базе"""
+        return Message.objects.create(chat=self.chat, sender=self.user, content=content)

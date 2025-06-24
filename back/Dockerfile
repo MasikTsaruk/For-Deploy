@@ -23,6 +23,5 @@ RUN chmod +x /app/manage.py
 EXPOSE 8000
 ENV DJANGO_SETTINGS_MODULE=back.settings
 
-# Команда по умолчанию
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-
+# Используем daphne вместо runserver
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "back.asgi:application"]
