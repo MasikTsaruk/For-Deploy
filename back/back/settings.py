@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'accounts',
+    'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'channels',
@@ -46,7 +47,8 @@ INSTALLED_APPS = [
 
 WSGI_APPLICATION = 'back.wsgi.application'
 ASGI_APPLICATION = 'back.asgi.application'
-
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -60,6 +62,7 @@ CHANNEL_LAYERS = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -78,6 +81,10 @@ REST_FRAMEWORK = {
 
 
 }
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
 
 SIMPLE_JWT = {
 
