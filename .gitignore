@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
 # Byte-compiled / optimized / DLL files
@@ -231,4 +231,4 @@ settings_local.py
 # Секретные файлы
 .env
 secrets.json
->>>>>>> e60f21908ccfaf615fd613a51e739f520499d8fe
+
