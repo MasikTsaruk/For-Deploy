@@ -4,7 +4,7 @@ from .views import ChatViewSet, MessageViewSet
 
 router = DefaultRouter()
 router.register(r'chats', ChatViewSet)
-router.register(r'messages', MessageViewSet)
+router.register(r'messages', MessageViewSet, basename='message')
 
 urlpatterns = [
     path('', include(router.urls)),

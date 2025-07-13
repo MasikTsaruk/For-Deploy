@@ -39,7 +39,7 @@ services:
 
   web:
     build: .
-    command: daphne -b 0.0.0.0 -p 8000 back.asgi:application
+    command: daphne -b 0.0.0.0 -p 8000 back.back.asgi:application
     volumes:
       - .:/app
     ports:
@@ -47,7 +47,6 @@ services:
     depends_on:
       - db
       - redis
-
 
 volumes:
   postgres_data: {}

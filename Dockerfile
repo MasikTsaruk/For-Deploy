@@ -17,11 +17,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app/
 
 # Убедимся, что у нас правильные права доступа к папкам
-RUN chmod +x /app/manage.py
+RUN chmod +x /app/back/manage.py
 
 # Экспонируем порт
 EXPOSE 8000
-ENV DJANGO_SETTINGS_MODULE=back.settings
+ENV DJANGO_SETTINGS_MODULE=back.back.settings
 
 # Команда по умолчанию
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

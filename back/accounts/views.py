@@ -19,7 +19,7 @@ class CustomUserViewSet(ModelViewSet):
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticated]
 
-    @method_decorator(cache_page(60 * 15))
+    #@method_decorator(cache_page(60 * 15))
     def list(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)
 

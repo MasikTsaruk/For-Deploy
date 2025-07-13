@@ -4,7 +4,6 @@ import RegisterForm from '../components/RegisterForm';
 function RegisterPage() {
     return (
         <div>
-            <h2>Регистрация</h2>
             <RegisterForm />
         </div>
     );

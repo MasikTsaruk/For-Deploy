@@ -1,11 +1,11 @@
-// src/components/LoginForm.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from '../styles/Form.module.css';
 
-function LoginForm() {
+function LoginForm({ onLoginSuccess }) {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
-    const [token, setToken] = useState('');
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -13,7 +13,6 @@ function LoginForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Отправка формы...', formData);
         setError('');
 
         try {
@@ -26,9 +25,10 @@ function LoginForm() {
             const data = await response.json();
 
             if (response.ok) {
-                localStorage.setItem('access', data.access);
-                localStorage.setItem('refresh', data.refresh);
-                setToken(data.access);
+                // Обновляем состояние App через prop-функцию
+                onLoginSuccess(data.access);
+
+                navigate('/'); // Переход на главную
             } else {
                 setError('Ошибка: ' + JSON.stringify(data));
             }
@@ -39,7 +39,7 @@ function LoginForm() {
 
     return (
         <form onSubmit={handleSubmit} className={styles.formContainer}>
-            <h2>Вход</h2>
+            <h2>Log In</h2>
 
             <input
                 className={styles.inputField}
@@ -55,18 +55,16 @@ function LoginForm() {
                 className={styles.inputField}
                 type="password"
                 name="password"
-                placeholder="Пароль"
+                placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
                 required
             />
 
-            <button type="submit" className={styles.button}>Войти</button>
+            <button type="submit" className={styles.button}>Log In</button>
 
-            {token && <p className={styles.success}>Вход выполнен</p>}
             {error && <p className={styles.error}>{error}</p>}
         </form>
-
     );
 }
 

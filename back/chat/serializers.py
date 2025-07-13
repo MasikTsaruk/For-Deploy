@@ -4,11 +4,13 @@ from accounts.serializers import CustomUserSerializer
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    sender = CustomUserSerializer(read_only=True)
-
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = ['id', 'chat', 'sender', 'content', 'timestamp']
+        extra_kwargs = {
+            'chat': {'required': False},
+            'sender': {'required': False}
+        }
 
 
 class ChatSerializer(serializers.ModelSerializer):

@@ -31,11 +31,20 @@ class ChatViewSet(viewsets.ModelViewSet):
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
+    queryset = Message.objects.all()
+
+    def get_queryset(self):
+        chat_id = self.request.query_params.get('chat')
+        if chat_id:
+            return Message.objects.filter(chat_id=chat_id).order_by("timestamp")
+        return Message.objects.none()  # чтобы не отдавать все сообщения
 
     def perform_create(self, serializer):
         chat_id = self.request.data.get("chat_id")
         chat = Chat.objects.get(id=chat_id)
+
         serializer.save(sender=self.request.user, chat=chat)
+
+

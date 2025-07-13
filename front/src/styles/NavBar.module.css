@@ -1,0 +1,25 @@
+/* src/styles/NavBar.module.css */
+.navbar {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #1976d2;
+    color: white;
+}
+
+.navLink {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.navLink:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.activeLink {
+    background-color: rgba(255, 255, 255, 0.3);
+    font-weight: bold;
+}
