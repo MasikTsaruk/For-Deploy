@@ -19,6 +19,21 @@ function ChatPage({ accessToken, currentUserId }) {
     const ws = useRef(null);
     const [input, setInput] = useState("");
 
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const [isSidebarVisible, setSidebarVisible] = useState(window.innerWidth > 768); // по умолчанию true на ПК
+
+    useEffect(() => {
+        const handleResize = () => {
+            const mobile = window.innerWidth <= 768;
+            setIsMobile(mobile);
+            setSidebarVisible(!mobile); // Показывать сайдбар на ПК, скрывать на моб.
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+
 
     useEffect(() => {
         async function fetchUsers() {
@@ -116,9 +131,22 @@ function ChatPage({ accessToken, currentUserId }) {
 
     return (
         <div className={styles.chatPage}>
+            {isMobile && (
+                <button
+                    className={styles.toggleSidebarButton}
+                    onClick={() => setSidebarVisible(!isSidebarVisible)}
+                >
+                    {isSidebarVisible ? "Закрыть чаты" : "Открыть чаты"}
+                </button>
+            )}
+
             {/* Список пользователей */}
-            <div className={styles.sidebar}>
-                <h3>Users</h3>
+            <div
+                className={`${styles.sidebar} ${
+                    isMobile && !isSidebarVisible ? styles.hiddenSidebar : ""
+                }`}
+            >
+            <h3>Чаты</h3>
                 <ul style={{ listStyle: "none", padding: 0 }}>
                     {users.map((user) => (
                         <li
@@ -127,7 +155,10 @@ function ChatPage({ accessToken, currentUserId }) {
                             style={{
                                 backgroundColor: activeUser?.id === user.id ? "#b2ebf2" : undefined,
                             }}
-                            onClick={() => handleUserClick(user)}
+                            onClick={() => {
+                                handleUserClick(user);
+                                setSidebarVisible(false); // Закрыть на мобилке после выбора
+                            }}
                         >
                             {user.first_name || user.email}
                         </li>
@@ -146,11 +177,10 @@ function ChatPage({ accessToken, currentUserId }) {
                 </div>
             </div>
 
-
             {/* Чат */}
             <div className={styles.chatBox}>
                 <div style={{ fontWeight: "bold", marginBottom: "1rem" }}>
-                    {activeUser ? `Chat with ${activeUser.first_name || activeUser.email}` : "Choose User"}
+                    {activeUser ? `Чат с ${activeUser.first_name || activeUser.email}` : "Выберите пользователя"}
                 </div>
 
                 <div className={styles.messages}>
@@ -206,6 +236,7 @@ function ChatPage({ accessToken, currentUserId }) {
             </div>
         </div>
     );
+
 
 }
 

@@ -61,6 +61,7 @@ services:
     tty: true
     volumes:
       - ./front:/app
+      - /app/node_modules 
     depends_on:
       - web
 

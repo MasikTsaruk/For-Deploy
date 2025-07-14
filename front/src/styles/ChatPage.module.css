@@ -62,3 +62,46 @@
     background-color: #5cb85c;
     color: white;
 }
+
+.toggleSidebarButton {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+    padding: 10px 15px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.hiddenSidebar {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .chatPage {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        max-height: 70vh;
+        overflow-y: auto;
+        background-color: #f5f5f5;
+        padding: 1rem;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .chatBox {
+        flex: 1;
+        padding: 1rem;
+    }
+
+    .toggleSidebarButton {
+        display: block;
+    }
+}
