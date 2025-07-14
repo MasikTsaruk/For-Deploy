@@ -19,6 +19,7 @@ function ChatPage({ accessToken, currentUserId }) {
     const ws = useRef(null);
     const [input, setInput] = useState("");
 
+
     useEffect(() => {
         async function fetchUsers() {
             const res = await fetch("http://localhost:8000/api/users/", {
@@ -61,10 +62,17 @@ function ChatPage({ accessToken, currentUserId }) {
 
         ws.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            if (data.type === "chat.message") {
-                setMessages((msgs) => [...msgs, data.message]);
-            }
+            setMessages((msgs) => [
+                ...msgs,
+                {
+                    content: data.message,
+                    sender: data.sender_id,
+                    timestamp: data.timestamp,
+                },
+            ]);
         };
+
+
 
         ws.current.onclose = () => {
             console.log("WebSocket disconnected");
@@ -91,24 +99,19 @@ function ChatPage({ accessToken, currentUserId }) {
         setActiveChatId(chat.id);
     }
 
-    async function sendMessage(text) {
-        if (!text || !activeChatId) return;
+    function sendMessage(text) {
+        if (!text || !activeChatId || !ws.current || ws.current.readyState !== WebSocket.OPEN) return;
 
-        const data = { chat_id: activeChatId, content: text };
-        const response = await fetch('http://localhost:8000/chat/messages/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify(data),
-        });
+        const message = {
+            message: text,
+        };
 
-        if (response.ok) {
-            const newMessage = await response.json();
-            setMessages(prev => [...prev, newMessage]);
-        }
+        // Добавляем сообщение себе
+
+        ws.current.send(JSON.stringify(message));
     }
+
+
 
 
     return (
@@ -130,12 +133,24 @@ function ChatPage({ accessToken, currentUserId }) {
                         </li>
                     ))}
                 </ul>
+                <div style={{ marginTop: "1rem" }}>
+                    <iframe
+                        width="100%"
+                        height="200"
+                        src="https://www.youtube.com/embed/d0tmGkQNykY"
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    ></iframe>
+                </div>
             </div>
+
 
             {/* Чат */}
             <div className={styles.chatBox}>
                 <div style={{ fontWeight: "bold", marginBottom: "1rem" }}>
-                    {activeUser ? `Чат с ${activeUser.first_name || activeUser.email}` : "Choose User"}
+                    {activeUser ? `Chat with ${activeUser.first_name || activeUser.email}` : "Choose User"}
                 </div>
 
                 <div className={styles.messages}>

@@ -17,9 +17,23 @@ services:
     volumes:
       - redis_data:/data
 
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: daphne -b 0.0.0.0 -p 8000 back.asgi:application
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
   celery:
     build:
       context: .
+      dockerfile: Dockerfile
     command: celery -A back worker --loglevel=info -P solo
     volumes:
       - .:/app
@@ -30,6 +44,7 @@ services:
   celery-beat:
     build:
       context: .
+      dockerfile: Dockerfile
     command: celery -A back beat --loglevel=info
     volumes:
       - .:/app
@@ -37,18 +52,19 @@ services:
       - db
       - redis
 
-  web:
-    build: .
-    command: daphne -b 0.0.0.0 -p 8000 back.back.asgi:application
-    volumes:
-      - .:/app
+  frontend:
+    build:
+      context: ./front
     ports:
-      - "8000:8000"
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./front:/app
     depends_on:
-      - db
-      - redis
+      - web
+
 
 volumes:
   postgres_data: {}
   redis_data: {}
-

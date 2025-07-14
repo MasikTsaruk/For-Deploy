@@ -65,14 +65,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sender_email = event["sender_email"]
         timestamp = event["timestamp"]
 
-        # Отправляем сообщение только **не отправителю**
-        if sender_id != self.user.id:
-            await self.send(text_data=json.dumps({
-                "message": message,
-                "sender_id": sender_id,
-                "sender_email": sender_email,
-                "timestamp": timestamp
-            }))
+        await self.send(text_data=json.dumps({
+            "message": message,
+            "sender_id": sender_id,
+            "sender_email": sender_email,
+            "timestamp": timestamp
+        }))
 
     @database_sync_to_async
     def get_chat(self):
