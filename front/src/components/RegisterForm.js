@@ -1,8 +1,10 @@
-// src/components/RegisterForm.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from '../styles/Form.module.css';
 
 function RegisterForm() {
+    const navigate = useNavigate(); // ⬅️ вот он
+
     const [formData, setFormData] = useState({
         email: '',
         first_name: '',
@@ -32,6 +34,11 @@ function RegisterForm() {
             if (response.ok) {
                 setMessage('Registration passed correctly!');
                 setFormData({ email: '', first_name: '', last_name: '', password: '' });
+
+                // ⬇️ переход на логин через 1 секунду
+                setTimeout(() => {
+                    navigate('/login');
+                }, 1000);
             } else {
                 setError(data?.detail || 'Ошибка регистрации');
             }
@@ -41,7 +48,6 @@ function RegisterForm() {
     };
 
     return (
-        
         <div className={styles.formContainer}>
             <h2>Sign Up</h2>
             <form onSubmit={handleSubmit}>
