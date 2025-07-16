@@ -69,7 +69,7 @@ function ChatPage({ accessToken, currentUserId }) {
         }
         loadMessages();
 
-        const socketUrl = `ws://for-deploy-3yby.onrender.com/ws/chat/${activeChatId}/?token=${accessToken}`;
+        const socketUrl = `wss://for-deploy-3yby.onrender.com/ws/chat/${activeChatId}/?token=${accessToken}`;
         ws.current = new WebSocket(socketUrl);
 
         ws.current.onmessage = (event) => {
