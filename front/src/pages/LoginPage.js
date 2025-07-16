@@ -1,5 +1,5 @@
 // pages/LoginPage.js
-import React from 'react';
+import React, {useEffect} from 'react';
 import LoginForm from '../components/LoginForm';
 
 function LoginPage({ onLoginSuccess }) {
