@@ -1,10 +1,12 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/Form.module.css';
+import Spinner from './Spinner'; // спиннер вынесен в отдельный компонент
 
 function LoginForm({ onLoginSuccess }) {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -14,6 +16,7 @@ function LoginForm({ onLoginSuccess }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
 
         try {
             const response = await fetch('https://for-deploy-3yby.onrender.com/api/login/', {
@@ -25,21 +28,21 @@ function LoginForm({ onLoginSuccess }) {
             const data = await response.json();
 
             if (response.ok) {
-                // Обновляем состояние App через prop-функцию
                 onLoginSuccess(data.access);
-
-                navigate('/'); // Переход на главную
+                setTimeout(() => navigate('/'), 500); // Небольшая пауза после логина
             } else {
-                setError('Ошибка: ' + JSON.stringify(data));
+                setError('Ошибка: ' + (data.detail || JSON.stringify(data)));
             }
         } catch {
             setError('Ошибка соединения.');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <form onSubmit={handleSubmit} className={styles.formContainer}>
-            <h2>Log In</h2>
+            <h2>Вход</h2>
 
             <input
                 className={styles.inputField}
@@ -55,13 +58,19 @@ function LoginForm({ onLoginSuccess }) {
                 className={styles.inputField}
                 type="password"
                 name="password"
-                placeholder="Password"
+                placeholder="Пароль"
                 value={formData.password}
                 onChange={handleChange}
                 required
             />
 
-            <button type="submit" className={styles.button}>Log In</button>
+            <button
+                type="submit"
+                className={styles.button}
+                disabled={loading}
+            >
+                {loading ? <Spinner size="small" /> : 'Войти'}
+            </button>
 
             {error && <p className={styles.error}>{error}</p>}
         </form>

@@ -40,6 +40,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         """Обрабатывает входящее сообщение от клиента"""
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
+        client_id = text_data_json.get("client_id")
 
         print(f"Received message from {self.user}: {message}")
 
@@ -55,6 +56,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "sender_id": msg.sender.id,
                 "sender_email": msg.sender.email,
                 "timestamp": msg.timestamp.isoformat(),
+                "client_id": client_id 
             }
         )
 
@@ -64,12 +66,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         sender_id = event["sender_id"]
         sender_email = event["sender_email"]
         timestamp = event["timestamp"]
+        client_id = event.get("client_id")
 
         await self.send(text_data=json.dumps({
             "message": message,
             "sender_id": sender_id,
             "sender_email": sender_email,
-            "timestamp": timestamp
+            "timestamp": timestamp, 
+            "client_id": client_id
         }))
 
     @database_sync_to_async
