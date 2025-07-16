@@ -41,6 +41,7 @@ function RegisterForm() {
     };
 
     return (
+        
         <div className={styles.formContainer}>
             <h2>Sign Up</h2>
             <form onSubmit={handleSubmit}>

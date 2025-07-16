@@ -35,6 +35,7 @@ function App() {
     };
 
     return (
+        
         <Router>
             <nav className={styles.navbar}>
                 <NavLink to="/" className={({ isActive }) => isActive ? `${styles.navLink} ${styles.activeLink}` : styles.navLink}>

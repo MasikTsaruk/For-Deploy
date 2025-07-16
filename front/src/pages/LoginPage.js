@@ -3,7 +3,12 @@ import React from 'react';
 import LoginForm from '../components/LoginForm';
 
 function LoginPage({ onLoginSuccess }) {
-    return <LoginForm onLoginSuccess={onLoginSuccess} />;
+    return (
+    <div>
+    <title>Chat Portfolio</title>
+    <LoginForm onLoginSuccess={onLoginSuccess} />
+    </div>
+);
 }
 
 export default LoginPage;
