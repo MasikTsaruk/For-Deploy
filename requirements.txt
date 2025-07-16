@@ -69,6 +69,7 @@ PyJWT==2.9.0
 pyOpenSSL==24.2.1
 PySocks==1.7.1
 python-dateutil==2.9.0.post0
+python-dotenv==1.1.1
 queuelib==1.7.0
 redis==5.1.1
 requests==2.32.3
