@@ -127,12 +127,13 @@ function ChatPage({ accessToken, currentUserId }) {
     }
 
 
-
+    useEffect(() => {
+        document.title = 'Chat Portfolio';
+    }, []);
 
     return (
         <div className={styles.chatPage}>
             
-            <title>Chat Portfolio</title>
             {isMobile && (
                 <button
                     className={styles.toggleSidebarButton}

@@ -2,9 +2,11 @@ import React from 'react';
 import RegisterForm from '../components/RegisterForm';
 
 function RegisterPage() {
+    useEffect(() => {
+        document.title = 'Chat Portfolio';
+    }, []);
     return (
         <div>
-            <title>Chat Portfolio</title>
             <RegisterForm />
         </div>
     );
