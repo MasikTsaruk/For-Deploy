@@ -22,7 +22,7 @@ function RegisterForm() {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:8000/api/register/', {
+            const response = await fetch('https://for-deploy-3yby.onrender.com/api/register/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

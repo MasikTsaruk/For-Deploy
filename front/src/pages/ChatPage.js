@@ -37,7 +37,7 @@ function ChatPage({ accessToken, currentUserId }) {
 
     useEffect(() => {
         async function fetchUsers() {
-            const res = await fetch("http://localhost:8000/api/users/", {
+            const res = await fetch("https://for-deploy-3yby.onrender.com/api/users/", {
                 headers: { Authorization: `Bearer ${accessToken}` },
             });
             const data = await res.json();
@@ -56,7 +56,7 @@ function ChatPage({ accessToken, currentUserId }) {
 
         async function loadMessages() {
             const res = await fetch(
-                `http://localhost:8000/chat/messages/?chat=${activeChatId}`,
+                `https://for-deploy-3yby.onrender.com/chat/messages/?chat=${activeChatId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
@@ -68,7 +68,7 @@ function ChatPage({ accessToken, currentUserId }) {
         }
         loadMessages();
 
-        const socketUrl = `ws://localhost:8000/ws/chat/${activeChatId}/?token=${accessToken}`;
+        const socketUrl = `https://for-deploy-3yby.onrender.com/ws/chat/${activeChatId}/?token=${accessToken}`;
         ws.current = new WebSocket(socketUrl);
 
         ws.current.onopen = () => {
@@ -101,7 +101,7 @@ function ChatPage({ accessToken, currentUserId }) {
     async function handleUserClick(user) {
         setActiveUser(user);
 
-        const res = await fetch("http://localhost:8000/chat/chats/get_or_create_chat/", {
+        const res = await fetch("https://for-deploy-3yby.onrender.com/chat/chats/get_or_create_chat/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
